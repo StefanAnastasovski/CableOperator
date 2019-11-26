@@ -1,9 +1,11 @@
 let querys = require('./querys');
-let {dateFormatSending} = require('../helper');
-let {fixWorkday,currentDate, sum2Numbers} = require('./common');
+
+let {fixWorkday, currentDate, createRegister} = require('./common');
+
 
 getRegisterInfo = async (req, res) => {
     try {
+        await createRegister();
         const register = await querys.getRegisterInfoQuery();
         fixWorkday(register);
         res.status(200).send(register);
@@ -12,14 +14,29 @@ getRegisterInfo = async (req, res) => {
     }
 };
 
+getRegisterInfoSpecificTerminal = async (req, res) => {
+    let terminal = req.params.terminal;
+    try {
+        if (!(terminal === '1' || terminal === '2' || terminal === '3')) {
+            res.status(400).send("Try again! Invalid Parametar. ");
+        } else {
+            const register = await querys.getRegisterInfoQuery(terminal);
+            fixWorkday(register);
+            res.status(200).send(register);
+        }
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 CheckRegisterIsBusy = async (req, res) => {
     let isBusy = req.params.isBusy;
-    let id = req.params.id;
+    let terminal = req.params.terminal;
     try {
         if (!(isBusy === '0' || isBusy === '1')) {
             res.status(400).send("Try again! Invalid Parametar. ");
         } else {
-            const register = await querys.CheckRegisterIsBusyQuery(id, isBusy);
+            const register = await querys.CheckRegisterIsBusyQuery(terminal, isBusy);
             fixWorkday(register);
             res.status(200).send(register);
         }
@@ -29,15 +46,13 @@ CheckRegisterIsBusy = async (req, res) => {
 };
 
 getRegisterBalanceCurrentDay = async (req, res) => {
-    let id = req.params.id;
-    let now = new Date();
-    now = dateFormatSending(now);
-    console.log(now);
+    let terminal = req.params.terminal;
+    let now = currentDate();
     try {
-        if (!(id === '1' || id === '2' || id === '3')) {
+        if (!(terminal === '1' || terminal === '2' || terminal === '3')) {
             res.status(400).send("Try again! Invalid Parametar. ");
         } else {
-            const register = await querys.getRegisterBalanceCurrentDayQuery(id, now);
+            const register = await querys.getRegisterBalanceCurrentDayQuery(terminal, now);
             fixWorkday(register);
             res.status(200).send(register);
         }
@@ -47,29 +62,13 @@ getRegisterBalanceCurrentDay = async (req, res) => {
 };
 
 getRegisterBalanceSpecificMonth = async (req, res) => {
-    let id = req.params.id;
+    let terminal = req.params.terminal;
     let now = req.params.month;
     try {
-        if (id && !(id === '1' || id === '2' || id === '3')) {
+        if (terminal && !(terminal === '1' || terminal === '2' || terminal === '3')) {
             res.status(400).send("Try again! Invalid Parametar. ");
         } else {
-            const register = await querys.getRegisterBalanceSpecificMonthQuery(id, now);
-            fixWorkday(register);
-            res.status(200).send(register);
-        }
-    } catch (error) {
-        res.status(500).send(error);
-    }
-};
-
-getRegisterInfoSpecificTerminal = async (req, res) => {
-    let id = req.params.id;
-    try {
-        if (!(id === '1' || id === '2' || id === '3')) {
-            res.status(400).send("Try again! Invalid Parametar. ");
-        } else {
-            const register = await querys.getRegisterInfoSpecificTerminalQuery(id);
-            console.log(register.workday);
+            const register = await querys.getRegisterBalanceSpecificMonthQuery(terminal, now);
             fixWorkday(register);
             res.status(200).send(register);
         }
@@ -79,20 +78,20 @@ getRegisterInfoSpecificTerminal = async (req, res) => {
 };
 
 registerChange = async (req, res) => {
-    let id = req.params.id;
+    let terminal = req.params.terminal;
     let body = req.body;
     let date = currentDate();
 
     try {
-        if (!(id === '1' || id === '2' || id === '3')) {
+        if (!(terminal === '1' || terminal === '2' || terminal === '3')) {
             res.status(400).send("Try again! Invalid Parametar. ");
         } else {
-            let terminal = await querys.getRegisterInfoSpecificTerminalQuery(id);
+            await querys.getRegisterInfoSpecificTerminalQuery(terminal);
 
-            body.balance = sum2Numbers(terminal[0].balance,body.balance);
+            // body.balance = sum2Numbers(terminal[0].balance,body.balance);
 
-            await querys.registerChangeQuery(body, id, date);
-            res.status(200).send("Update is completed successfully!");
+            await querys.registerChangeQuery(body, terminal, date);
+            res.status(200).send("Update completed successfully!");
         }
     } catch (error) {
         res.status(500).send(error);
@@ -101,9 +100,9 @@ registerChange = async (req, res) => {
 
 module.exports = {
     getRegisterInfo,
+    getRegisterInfoSpecificTerminal,
     CheckRegisterIsBusy,
     getRegisterBalanceCurrentDay,
     getRegisterBalanceSpecificMonth,
-    getRegisterInfoSpecificTerminal,
     registerChange
 };

@@ -1,25 +1,36 @@
-let {dateFormatReceiving} = require('../helper');
+let date = require('date-and-time');
+
+let {createRegisterQuery} = require('./querys');
 
 fixWorkday = (register) =>{
     register.forEach((item) =>{
-        item.workday = dateFormatReceiving(item.workday);
+        item.workday = date.format(item.workday,'YYYY-MM-DD');
     });
-    return register;
 };
 
 currentDate = () =>{
     let now = new Date();
-    now = dateFormatSending(now);
+    now = date.format(now, 'YYYY-MM-DD');
     return now;
 };
 
-sum2Numbers= (a, b) =>{
-    let c = parseInt(a) + parseInt(b);
-    return c;
+
+createRegister = async () =>{
+    try{
+
+        for(var i = 1; i <= 3; i++){
+            var regInfo = [i, 0, 0];
+            await createRegisterQuery(regInfo);
+        }
+    }
+    catch (e) {
+        console.log("Error: " + e.sqlMessage);
+    }
 };
+
 
 module.exports = {
     fixWorkday,
     currentDate,
-    sum2Numbers
+    createRegister
 };
