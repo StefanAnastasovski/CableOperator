@@ -192,10 +192,27 @@ changeEmployeeStatusOrBonusQuery = (body, umcn) => {
     });
 };
 
+getAllEmployeesUmcnQuery = () => {
+    const query = `
+        SELECT pi_umcn, working_hours
+        FROM employee`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
 module.exports = {
     getEmployeeInfoQuery,
     createEmployeeQuery,
     getAllEmployeesWorkStatusQuery,
     getAllEmployeesByTypeQuery,
-    changeEmployeeStatusOrBonusQuery
+    changeEmployeeStatusOrBonusQuery,
+    getAllEmployeesUmcnQuery
 };

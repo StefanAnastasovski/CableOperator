@@ -1,19 +1,21 @@
 var express = require('express');
-var registerRouter = require('./register/routes' );
-var personalRouter = require('./personal_information/routes' );
-var bankaccountRouter = require('./bank_account/routes' );
-var clientRouter = require('./client/routes' );
-var employeeRouter = require('./employee/routes');
+const registerRouter = require('./register/routes' );
+const personalRouter = require('./personal_information/routes' );
+const bankAccountRouter = require('./bank_account/routes' );
+const clientRouter = require('./client/routes' );
+const employeeRouter = require('./employee/routes');
+const scheduleRouter = require('./schedule/routes');
 
 
 const appRouter = express.Router();
 
-//
+
 appRouter.use(registerRouter);
 appRouter.use(personalRouter);
-appRouter.use(bankaccountRouter);
+appRouter.use(bankAccountRouter);
 appRouter.use(clientRouter);
 appRouter.use(employeeRouter);
+appRouter.use(scheduleRouter);
 
 
 module.exports = appRouter;
