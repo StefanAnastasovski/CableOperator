@@ -1,16 +1,17 @@
 let querys = require('./querys');
 
 let {checkBodyArgs} = require('./common');
-let {fixDateAndTime, checkUmcnOrAccNumber} = require('../helper');
+let {reviseDateAndTime, checkUmcnOrAccNumber} = require('../helper');
 
 getPersonalInformation = async (req, res) => {
     try {
         const client = await querys.getPersonalInformationQuery();
-        fixDateAndTime(client);
+        reviseDateAndTime(client);
         res.status(200).send(client);
     } catch (error) {
         res.status(500).send(error);
     }
+
 };
 
 createPersonalInformation = async(req, res) => {
@@ -46,6 +47,7 @@ changePersonalInformation = async (req, res) => {
     } else {
         res.status(400).send("Wrong UMCN, must have 13 characters or something is wrong with body!");
     }
+
 };
 
 module.exports = {

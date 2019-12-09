@@ -5,7 +5,9 @@ const bankAccountRouter = require('./bank_account/routes' );
 const clientRouter = require('./client/routes' );
 const employeeRouter = require('./employee/routes');
 const scheduleRouter = require('./schedule/routes');
-
+const billRouter = require('./bill/routes');
+const salaryRouter = require('./salary/routes');
+const warehouseRouter = require('./warehouse/routes');
 
 const appRouter = express.Router();
 
@@ -16,6 +18,9 @@ appRouter.use(bankAccountRouter);
 appRouter.use(clientRouter);
 appRouter.use(employeeRouter);
 appRouter.use(scheduleRouter);
+appRouter.use(billRouter);
+appRouter.use(salaryRouter);
+appRouter.use(warehouseRouter);
 
 
 module.exports = appRouter;

@@ -81,6 +81,41 @@ changeBankAccountQuery = (bodyInfo, accNumber) => {
 
 };
 
+getBalanceQuery = (accountId) => {
+    const query = `
+        SELECT account_name, account_number, balance, last_modified
+        FROM bank_account
+        WHERE account_number = ?`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [accountId], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+
+getCompanyBalanceQuery = (accountId) => {
+    const query = `
+        SELECT balance
+        FROM bank_account
+        WHERE account_number = ?`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [accountId], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
 module.exports = {
     createBankAccountQuery,
     getBankAccountQuery,

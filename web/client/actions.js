@@ -2,13 +2,13 @@ let querys = require('./querys');
 
 let {createBankAccountQuery} = require("../bank_account/querys");
 let {createPersonalInformationQuery} = require("../personal_information/querys");
-let {fixDateAndTime, printSqlError, bankAccountName} = require('../helper');
+let {reviseDateAndTime, printSqlError, bankAccountName} = require('../helper');
 
 
 getAllClientsInfo = async (req, res) => {
     try {
         const client = await querys.getClientInfoQuery();
-        fixDateAndTime(client);
+        reviseDateAndTime(client);
         res.status(200).send(client);
     } catch (error) {
         res.status(500).send(error);
@@ -19,7 +19,7 @@ getSpecificClientInfo = async (req, res) => {
     let umcn = req.params.umcn;
     try {
         const client = await querys.getClientInfoQuery(umcn);
-        fixDateAndTime(client);
+        reviseDateAndTime(client);
         res.status(200).send(client);
     } catch (error) {
         res.status(500).send(error);
@@ -40,7 +40,7 @@ getClientsStatus = async (req, res) => {
     let status = req.params.status;
     try {
         const client = await querys.getClientsStatusQuery(status);
-        fixDateAndTime(client);
+        reviseDateAndTime(client);
         res.status(200).send(client);
     } catch (error) {
         res.status(500).send(error);

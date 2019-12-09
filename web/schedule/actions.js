@@ -2,7 +2,7 @@ let querys = require('./querys');
 
 let {getAllEmployeesUmcnQuery} = require('../employee/querys');
 
-let {fixDateAndTime, currentDate} = require('../helper');
+let {reviseDateAndTime, currentDate} = require('../helper');
 
 createMonthlySchedule = async (req, res) => {
     try {
@@ -59,7 +59,7 @@ getMonthlySchedule = async (req, res) => {
             let umcn = req.params.umcn;
 
             let schedule = await querys.getMonthlyScheduleQuery(year, month, umcn);
-            fixDateAndTime(schedule);
+            reviseDateAndTime(schedule);
 
             res.status(200).send(schedule);
         }
@@ -68,7 +68,7 @@ getMonthlySchedule = async (req, res) => {
             let year = req.params.year;
 
             let schedule = await querys.getMonthlyScheduleQuery(year, month);
-            fixDateAndTime(schedule);
+            reviseDateAndTime(schedule);
 
             res.status(200).send(schedule);
         }
@@ -81,7 +81,7 @@ getMonthlySchedule = async (req, res) => {
             }
 
             let schedule = await querys.getMonthlyScheduleQuery(year, nextMonth);
-            fixDateAndTime(schedule);
+            reviseDateAndTime(schedule);
 
             res.status(200).send(schedule);
         }

@@ -4,8 +4,8 @@ sum2Numbers = (a, b) => {
     return parseInt(a) + parseInt(b);
 };
 
-fixDateAndTime = (account) => {
-    account.forEach((item) => {
+reviseDateAndTime = (data) => {
+    data.forEach((item) => {
         if(item.last_modified){
             item.last_modified = date.format(item.last_modified, 'YYYY-MM-DD HH:mm:ss') + "h";
         }
@@ -17,6 +17,17 @@ fixDateAndTime = (account) => {
         }
         if(item.work_date){
             item.work_date = date.format(item.work_date, 'YYYY-MM-DD');
+        }
+        if(item.workday){
+            item.workday = date.format(item.workday, 'YYYY-MM-DD');
+        }
+        if(item.monthly_bill && item.payment_due){
+            item.monthly_bill = date.format(item.monthly_bill, 'YYYY-MM');
+            item.payment_due = date.format(item.payment_due, 'YYYY-MM-DD');
+        }
+        if(item.salary_payment_date){
+            item.salary_payment_date = date.format(item.salary_payment_date, 'YYYY-MM-DD') ;
+
         }
     });
 };
@@ -30,7 +41,14 @@ printSqlError = (error) =>{
     console.log("SQL: " + error.sql);
 };
 
+concat2Strings = (str1, str2) =>{
+    return str1.concat(" " + str2);
+};
 
+bankAccountName= (body) =>{
+    if (body.first_name && body.last_name)
+        body.account_name = concat2Strings(body.first_name, body.last_name);
+};
 
 currentDate = () => {
     return new Date();
@@ -38,8 +56,9 @@ currentDate = () => {
 
 module.exports = {
     sum2Numbers,
-    fixDateAndTime,
+    reviseDateAndTime,
     checkUmcnOrAccNumber,
     printSqlError,
+    bankAccountName,
     currentDate
 };

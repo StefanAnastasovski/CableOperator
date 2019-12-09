@@ -208,11 +208,76 @@ getAllEmployeesUmcnQuery = () => {
     });
 };
 
+getEmployeesUmcnQuery = () => {
+    const query = `
+        SELECT pi_umcn
+        FROM employee`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getNeededSalaryInfoQuery  = (umcn) => {
+    let query;
+    if(umcn) {
+        query = `
+        SELECT pi_umcn, account_number, em_salary
+        FROM employee as e, bank_account as ba
+        WHERE
+             (pi_umcn = ? and e.ba_accNum = ba.account_number)
+             `;
+    }
+    else{
+        query = `
+        SELECT pi_umcn, account_number, em_salary
+        FROM employee as e, bank_account as ba
+        WHERE
+             e.ba_accNum = ba.account_number`;
+    }
+
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [umcn], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getNumberOfEmployeesQuery = () => {
+    const query = `
+        SELECT count(pi_umcn) as total
+        FROM employee`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results[0].total);
+            }
+        });
+    });
+};
+
 module.exports = {
     getEmployeeInfoQuery,
     createEmployeeQuery,
     getAllEmployeesWorkStatusQuery,
     getAllEmployeesByTypeQuery,
     changeEmployeeStatusOrBonusQuery,
-    getAllEmployeesUmcnQuery
+    getAllEmployeesUmcnQuery,
+    getNeededSalaryInfoQuery,
+    getEmployeesUmcnQuery,
+    getNumberOfEmployeesQuery
 };

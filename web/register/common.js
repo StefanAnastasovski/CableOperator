@@ -2,18 +2,12 @@ let date = require('date-and-time');
 
 let {createRegisterQuery} = require('./querys');
 
-fixWorkday = (register) =>{
-    register.forEach((item) =>{
-        item.workday = date.format(item.workday,'YYYY-MM-DD');
-    });
-};
 
 currentDate = () =>{
     let now = new Date();
     now = date.format(now, 'YYYY-MM-DD');
     return now;
 };
-
 
 createRegister = async () =>{
     try{
@@ -30,7 +24,6 @@ createRegister = async () =>{
 
 
 module.exports = {
-    fixWorkday,
     currentDate,
     createRegister
 };

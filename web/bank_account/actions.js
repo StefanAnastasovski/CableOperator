@@ -4,8 +4,8 @@ let {fixDateAndTime, checkUmcnOrAccNumber, bankAccountName, printSqlError} = req
 
 getAllBankAccounts = async (req, res) => {
     try {
-        let account = await getBankAccountQuery();
-        fixDateAndTime(account);
+        let account = await querys.getBankAccountQuery();
+        reviseDateAndTime(account);
         res.status(200).send(account);
     } catch (error) {
         res.status(500).send(error);
@@ -17,8 +17,8 @@ getSpecificBankAccount = async (req, res) => {
     const accNumber = req.params.accNumber;
 
     try {
-        let account = await getBankAccountQuery(accNumber);
-        fixDateAndTime(account);
+        let account = await querys.getBankAccountQuery(accNumber);
+        reviseDateAndTime(account);
         res.status(200).send(account);
     } catch (error) {
         res.status(500).send(error);
@@ -29,7 +29,6 @@ getSpecificBankAccount = async (req, res) => {
 createBankAccount = async (req, res) => {
     let bodyInfo = req.body;
     bankAccountName(bodyInfo);
-
     try {
         if (checkUmcnOrAccNumber(bodyInfo.account_number)) {
             await querys.createBankAccountQuery(bodyInfo);

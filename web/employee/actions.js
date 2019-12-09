@@ -1,11 +1,11 @@
 let querys = require('./querys');
 
-let {fixDateAndTime, bankAccountName} = require('../helper');
+let {reviseDateAndTime, bankAccountName} = require('../helper');
 
 getAllEmployeesInfo = async (req, res) => {
     try {
         const employee = await querys.getEmployeeInfoQuery();
-        fixDateAndTime(employee);
+        reviseDateAndTime(employee);
         res.status(200).send(employee);
     } catch (error) {
         res.status(500).send(error);
@@ -16,7 +16,7 @@ getSpecificEmployeeInfo = async (req, res) => {
     let umcn = req.params.umcn;
     try {
         const employee = await querys.getEmployeeInfoQuery(umcn);
-        fixDateAndTime(employee);
+        reviseDateAndTime(employee);
         res.status(200).send(employee);
     } catch (error) {
         res.status(500).send(error);
@@ -45,7 +45,7 @@ getAllEmployeesWorkStatus = async (req, res) => {
 
     try {
         const employee = await querys.getAllEmployeesWorkStatusQuery(status);
-        fixDateAndTime(employee);
+        reviseDateAndTime(employee);
         res.status(200).send(employee);
     } catch (error) {
         res.status(500).send(error);
@@ -57,7 +57,7 @@ getAllEmployeesByType = async (req, res) => {
 
     try {
         const employee = await querys.getAllEmployeesByTypeQuery(type);
-        fixDateAndTime(employee);
+        reviseDateAndTime(employee);
         res.status(200).send(employee);
     } catch (error) {
         res.status(500).send(error);
