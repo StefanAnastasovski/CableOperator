@@ -6,6 +6,44 @@ checkWorkingHours = (hours) => {
     return hours === '40';
 };
 
+let getDaysInMonth = function (year, month) {
+    //January 1
+    //Day 0 is the last day in the previous month
+    return new Date(year, month + 1, 0).getDate();
+
+};
+
+checkIfIsWeekend = (day) => {
+    return day === 6 || day === 0;
+};
+
+whatDayIsIt = (day) => {
+    let days = {
+        0: 'Sunday',
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday'
+    };
+
+    if (day >= 0 && day <= 6) {
+        let dayKeys = Object.keys(days);
+        return dayKeys.reduce((acc, currValue) => {
+            if (parseInt(day) === parseInt(currValue)) {
+                acc = Object.values(days)[currValue];
+            } else if (parseInt(day) === 0) {
+                acc = Object.values(days)[0];
+            }
+            return acc;
+        });
+    } else {
+        return 'Wrong parameter!';
+    }
+
+};
+
 populateSchedule = (emInfo, year, month) => {
 
     if (month > 0 && month <= 12) {
@@ -101,44 +139,7 @@ populateSchedule = (emInfo, year, month) => {
     }
 
 };
-checkIfIsWeekend = (day) => {
-    return day === 6 || day === 0;
-};
 
-
-whatDayIsIt = (day) => {
-    let days = {
-        0: 'Sunday',
-        1: 'Monday',
-        2: 'Tuesday',
-        3: 'Wednesday',
-        4: 'Thursday',
-        5: 'Friday',
-        6: 'Saturday'
-    };
-
-    if (day >= 0 && day <= 6) {
-        let dayKeys = Object.keys(days);
-        return dayKeys.reduce((acc, currValue) => {
-            if (parseInt(day) === parseInt(currValue)) {
-                acc = Object.values(days)[currValue];
-            } else if (parseInt(day) === 0) {
-                acc = Object.values(days)[0];
-            }
-            return acc;
-        });
-    } else {
-        return 'Wrong parameter!';
-    }
-
-};
-
-let getDaysInMonth = function (year, month) {
-    //January 1
-    //Day 0 is the last day in the previous month
-    return new Date(year, month + 1, 0).getDate();
-
-};
 module.exports = {
     populateSchedule
 };

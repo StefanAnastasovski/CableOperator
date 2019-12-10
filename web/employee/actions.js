@@ -1,6 +1,10 @@
+
+
 let querys = require('./querys');
 
 let {reviseDateAndTime, bankAccountName} = require('../helper');
+let {createBankAccountQuery} = require('../bank_account/querys');
+let {createPersonalInformationQuery} = require('../personal_information/querys');
 
 getAllEmployeesInfo = async (req, res) => {
     try {

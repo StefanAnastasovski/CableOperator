@@ -83,12 +83,11 @@ createMonthlyPayroll = async (req, res) => {
         let salaryInfo = umcn.map(async (employee) => {
             let employeeInfo = await getNeededSalaryInfoQuery(employee.pi_umcn);
             allEmployeesSalary += parseInt(employeeInfo[0].em_salary);
-            let object = {
+            return {
                 pi_umcn: employeeInfo[0].pi_umcn,
                 account_number: employeeInfo[0].account_number,
                 em_salary: employeeInfo[0].em_salary
             };
-            return object;
         });
         const employeesSalaryInfo = await Promise.all(salaryInfo);
 
