@@ -80,11 +80,22 @@ changeEmployeeStatusOrBonus = async (req, res) => {
     }
 };
 
+getNeededSalaryInfo = async (req, res) => {
+    try {
+        const employee = await querys.getEmployeeInfoQuery();
+        reviseDateAndTime(employee);
+        res.status(200).send(employee);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
 module.exports = {
     getAllEmployeesInfo,
     getSpecificEmployeeInfo,
     createEmployee,
     getAllEmployeesWorkStatus,
     getAllEmployeesByType,
-    changeEmployeeStatusOrBonus
+    changeEmployeeStatusOrBonus,
+    getNeededSalaryInfo
 };

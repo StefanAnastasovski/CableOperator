@@ -53,20 +53,26 @@ createBankAccountQuery = (bodyInfo) => {
     });
 };
 
-changeBankAccountQuery = (bodyInfo, accNumber) => {
+changeBankAccountQuery = (bodyInfo, lastModified, accountNumber, op) => {
     let query;
     let info = [];
-    if (bodyInfo.account_number) {
-        query = `UPDATE bank_account
-                 SET account_number = ?,
-                     balance        = balance + ?
-                 WHERE account_number = ?`;
-        info = [bodyInfo.account_number, bodyInfo.balance, accNumber];
-    } else {
-        query = `UPDATE bank_account
-                 SET balance = balance + ?
-                 WHERE account_number = ?`;
-        info = [bodyInfo.balance, accNumber];
+
+    //op salary paid
+    if (op) {
+        if (op === "+") {
+            query = `UPDATE bank_account
+                     SET balance       = balance + ?,
+                         last_modified = ?
+                     WHERE account_number = ?`;
+            info = [bodyInfo.balance, lastModified, accountNumber];
+            // }
+        } else if (op === "-") {
+            query = `UPDATE bank_account
+                     SET balance       = balance - ?,
+                         last_modified = ?
+                     WHERE account_number = ?`;
+            info = [bodyInfo.balance, lastModified, accountNumber];
+        }
     }
 
     return new Promise((resolve, reject) => {
@@ -119,5 +125,7 @@ getCompanyBalanceQuery = (accountId) => {
 module.exports = {
     createBankAccountQuery,
     getBankAccountQuery,
-    changeBankAccountQuery
+    changeBankAccountQuery,
+    getBalanceQuery,
+    getCompanyBalanceQuery
 };

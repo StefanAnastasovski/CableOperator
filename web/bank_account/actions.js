@@ -1,6 +1,6 @@
 let querys = require('./querys');
-let {fixDateAndTime, checkUmcnOrAccNumber, bankAccountName, printSqlError} = require('../helper');
 
+let {reviseDateAndTime, checkUmcnOrAccNumber, bankAccountName, printSqlError, currentDate} = require('../helper');
 
 getAllBankAccounts = async (req, res) => {
     try {
@@ -47,12 +47,17 @@ changeBankAccount = async (req, res) => {
     const bodyInfo = req.body;
 
     try {
-        let accountBalance = await getBankAccountQuery(accNumber);
-        if (accountBalance === 0) {
+        let bankAccount = await querys.getBankAccountQuery(accNumber);
+
+        if (bankAccount === 0) {
             res.status(400).send("Non-exist Bank Account!");
+        } else if (bodyInfo.op) {
+            let date = currentDate();
+            await querys.changeBankAccountQuery(bodyInfo, date, accNumber, bodyInfo.op);
+            res.status(200).send("Update completed successfully!");
         } else {
-            // bodyInfo.balance = sum2Numbers(accountBalance[0].balance, bodyInfo.balance);
-            await changeBankAccountQuery(bodyInfo, accNumber);
+            let date = currentDate();
+            await querys.changeBankAccountQuery(bodyInfo, date, accNumber);
             res.status(200).send("Update completed successfully!");
         }
     } catch (error) {
