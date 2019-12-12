@@ -1,10 +1,11 @@
-
-
 let querys = require('./querys');
 
-let {reviseDateAndTime, bankAccountName} = require('../helper');
+let {neededEmployeeQueryInfo} = require('./common');
+let {reviseDateAndTime, printSqlError} = require('../helper');
 let {createBankAccountQuery} = require('../bank_account/querys');
 let {createPersonalInformationQuery} = require('../personal_information/querys');
+let {addSalaryForNewEmployeeQuery} = require('../salary/querys');
+
 
 getAllEmployeesInfo = async (req, res) => {
     try {
@@ -29,13 +30,14 @@ getSpecificEmployeeInfo = async (req, res) => {
 
 createEmployee = async (req, res) => {
     let bodyInfo = req.body;
-    bankAccountName(bodyInfo);
     try {
-        await createPersonalInformationQuery(bodyInfo);
+        let neededEmployeeInfo = await neededEmployeeQueryInfo(bodyInfo);
+        await addSalaryForNewEmployeeQuery(neededEmployeeInfo)
+        await createPersonalInformationQuery(neededEmployeeInfo);
         console.log("Personal Information is created!");
-        await createBankAccountQuery(bodyInfo);
+        await createBankAccountQuery(neededEmployeeInfo);
         console.log("Bank Account is created!");
-        await querys.createEmployeeQuery(bodyInfo);
+        await querys.createEmployeeQuery(neededEmployeeInfo);
         console.log("Employee is created!");
         res.status(200).send("Employee is created!");
     } catch (error) {
@@ -58,7 +60,6 @@ getAllEmployeesWorkStatus = async (req, res) => {
 
 getAllEmployeesByType = async (req, res) => {
     let type = req.params.type;
-
     try {
         const employee = await querys.getAllEmployeesByTypeQuery(type);
         reviseDateAndTime(employee);
@@ -71,7 +72,6 @@ getAllEmployeesByType = async (req, res) => {
 changeEmployeeStatusOrBonus = async (req, res) => {
     let umcn = req.params.umcn;
     let bodyInfo = req.body;
-
     try {
         await querys.changeEmployeeStatusOrBonusQuery(bodyInfo, umcn);
         res.status(200).send("Update completed successfully!");

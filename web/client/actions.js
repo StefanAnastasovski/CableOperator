@@ -1,8 +1,9 @@
 let querys = require('./querys');
 
+let {neededClientQueryInfo} = require('./common');
 let {createBankAccountQuery} = require("../bank_account/querys");
 let {createPersonalInformationQuery} = require("../personal_information/querys");
-let {reviseDateAndTime, printSqlError, bankAccountName} = require('../helper');
+let {reviseDateAndTime, printSqlError} = require('../helper');
 
 
 getAllClientsInfo = async (req, res) => {
@@ -49,14 +50,14 @@ getClientsStatus = async (req, res) => {
 
 createClient = async (req, res) => {
     let bodyInfo = req.body;
-    bankAccountName(bodyInfo);
     try {
-        await createPersonalInformationQuery(bodyInfo);
+        let neededClientInfo = await neededClientQueryInfo(bodyInfo);
+        await createPersonalInformationQuery(neededClientInfo);
         console.log("Personal Information is created!");
-        await createBankAccountQuery(bodyInfo);
+        await createBankAccountQuery(neededClientInfo);
         console.log("Bank Account is created!");
-        await querys.createSpecificClientQuery(bodyInfo);
-        console.log("Employee is created!");
+        await querys.createSpecificClientQuery(neededClientInfo);
+        console.log("Client is created!");
         res.status(200).send("Client is created!");
     } catch (error) {
         printSqlError(error);

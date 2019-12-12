@@ -15,7 +15,8 @@ getClientInfoQuery = (umcn) => {
                    phone_number,
                    cl_type,
                    cl_status,
-                   account_number
+                   account_number,
+                   client_id
             FROM client_information as ci,
                  personal_information as pi,
                  bank_account as ba
@@ -37,7 +38,8 @@ getClientInfoQuery = (umcn) => {
                    phone_number,
                    cl_type,
                    cl_status,
-                   account_number
+                   account_number,
+                   client_id
             FROM client_information as ci,
                  personal_information as pi,
                  bank_account as ba
@@ -100,9 +102,9 @@ getClientsStatusQuery = (status) => {
 };
 
 createSpecificClientQuery = (body) => {
-    const query = `INSERT INTO client_information(cl_status, cl_type, pi_umcn, ba_accNum)
-                   VALUES (?, ?, ?, ?)`;
-    let info = [body.cl_status, body.cl_type, body.umcn, body.account_number];
+    const query = `INSERT INTO client_information(cl_status, cl_type, pi_umcn, ba_accNum, client_id)
+                   VALUES (?, ?, ?, ?, ?)`;
+    let info = [body.cl_status, body.cl_type, body.umcn, body.account_number, body.client_id];
     return new Promise((resolve, reject) => {
         conn.query(query, info, (error, results, fields) => {
             if (error) {
@@ -121,7 +123,7 @@ changeClientQuery = (body, umcn) => {
             personal_information as pi
         SET ci.cl_status = ?
         WHERE ci.pi_umcn = ?
-          and pi.umcn = ci.pi_umcn`;
+          AND pi.umcn = ci.pi_umcn`;
 
     var info = [body.cl_status, umcn];
 
@@ -152,11 +154,63 @@ getAllClientsUmcnAndIdQuery = () => {
     });
 };
 
+getTypeOfClientQuery = (umcn) => {
+    const query = `
+        SELECT cl_type
+        FROM client_information
+        WHERE pi_umcn = ?`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, umcn, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results[0].cl_type);
+            }
+        });
+    });
+};
+
+isClientExistQuery = (umcn) => {
+    const query = `
+        SELECT umcn
+        FROM client_information as ci, personal_information as pi
+        WHERE pi.umcn = ? AND pi.umcn = ci.pi_umcn`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [umcn], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getClientIdQuery = (umcn) => {
+    const query = `SELECT client_id
+                   FROM client_information
+                   WHERE pi_umcn = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, umcn, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
 module.exports = {
     getClientInfoQuery,
     getClientTableInfoQuery,
     getClientsStatusQuery,
     createSpecificClientQuery,
     changeClientQuery,
-    getAllClientsUmcnAndIdQuery
+    getAllClientsUmcnAndIdQuery,
+    getTypeOfClientQuery,
+    isClientExistQuery,
+    getClientIdQuery
 };

@@ -66,10 +66,10 @@ getEmployeeInfoQuery = (umcn) => {
 createEmployeeQuery = (body, umcn) => {
     const query = `
         INSERT INTO employee(hire_date, em_status, working_hours, em_salary,
-                             salary_bonus, em_type, pi_umcn, ba_accNum)
-        VALUES (?, ?, ?, ?, '0', ?, ?, ?)`;
+                             salary_bonus, em_type, pi_umcn, ba_accNum, salary_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    let info = [body.hire_date, body.em_status, body.working_hours, body.em_salary, body.em_type, body.umcn, body.account_number, umcn];
+    let info = [body.hire_date, body.em_status, body.working_hours, body.em_salary, '0', body.em_type, body.umcn, body.account_number, body.umcn];
     return new Promise((resolve, reject) => {
         conn.query(query, info, (error, results, fields) => {
             if (error) {

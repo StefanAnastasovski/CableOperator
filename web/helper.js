@@ -27,7 +27,10 @@ reviseDateAndTime = (data) => {
         }
         if(item.salary_payment_date){
             item.salary_payment_date = date.format(item.salary_payment_date, 'YYYY-MM-DD') ;
-
+        }
+        if(item.contract_date && item.expiration_date){
+            item.contract_date =  date.format(item.contract_date, 'YYYY-MM-DD') ;
+            item.expiration_date =  date.format(item.expiration_date, 'YYYY-MM-DD') ;
         }
     });
 };
@@ -47,7 +50,7 @@ concat2Strings = (str1, str2) =>{
 
 bankAccountName= (body) =>{
     if (body.first_name && body.last_name)
-        body.account_name = concat2Strings(body.first_name, body.last_name);
+        return concat2Strings(body.first_name, body.last_name);
 };
 
 currentDate = () => {

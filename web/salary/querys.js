@@ -198,6 +198,28 @@ getPayrollForEmployeeQuery = (date, umcn) => {
 
 };
 
+addSalaryForNewEmployeeQuery = (body) =>{
+    let query;
+    let info;
+
+        query = `
+            INSERT INTO salary(employee_id, salary_payment_date, is_paid)
+            VALUES(?,?,?);
+        `;
+        info = [body.umcn, body.hire_date, 0];
+
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, info, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
 module.exports = {
     createPayrollQuery,
     createMonthlyPayrollQuery,
@@ -205,5 +227,6 @@ module.exports = {
     getPayrollsQuery,
     getIsPaidQuery,
     changeIsPaidQuery,
-    getPayrollForEmployeeQuery
+    getPayrollForEmployeeQuery,
+    addSalaryForNewEmployeeQuery
 };

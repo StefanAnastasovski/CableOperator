@@ -1,6 +1,7 @@
 let querys = require('./querys');
 
-let {reviseDateAndTime, checkUmcnOrAccNumber, bankAccountName, printSqlError, currentDate} = require('../helper');
+let {reviseDateAndTime, checkUmcnOrAccNumber, printSqlError, currentDate} = require('../helper');
+let {neededBankAccountQueryInfo} = require('./common');
 
 getAllBankAccounts = async (req, res) => {
     try {
@@ -28,10 +29,11 @@ getSpecificBankAccount = async (req, res) => {
 
 createBankAccount = async (req, res) => {
     let bodyInfo = req.body;
-    bankAccountName(bodyInfo);
     try {
         if (checkUmcnOrAccNumber(bodyInfo.account_number)) {
-            await querys.createBankAccountQuery(bodyInfo);
+            //account_name = first_name last_name
+            let neededBankAccountInfo = await neededBankAccountQueryInfo(bodyInfo);
+            await querys.createBankAccountQuery(neededBankAccountInfo);
             res.status(200).send("Bank Account is created!");
         } else {
             res.status(400).send("Wrong Account Number!");
