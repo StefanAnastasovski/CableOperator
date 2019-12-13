@@ -32,6 +32,9 @@ reviseDateAndTime = (data) => {
             item.contract_date =  date.format(item.contract_date, 'YYYY-MM-DD') ;
             item.expiration_date =  date.format(item.expiration_date, 'YYYY-MM-DD') ;
         }
+        if(item.installation_date){
+            item.installation_date =  date.format(item.installation_date, 'YYYY-MM-DD') ;
+        }
     });
 };
 

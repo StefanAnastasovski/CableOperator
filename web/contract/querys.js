@@ -102,10 +102,30 @@ getContractsByServiceQuery = (service) => {
     });
 };
 
+
+getContractNumberAndDateQuery = (clientUmcn) => {
+    const query = `SELECT contract_number, contract_date
+                FROM contract
+                WHERE cl_id = ?
+                ORDER BY id desc `;
+
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [clientUmcn], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results[0]);
+            }
+        });
+    });
+};
+
 module.exports = {
     createContractQuery,
     getNumberOfContractForClientQuery,
     getAllContractsQuery,
     getContractsForSpecificClientQuery,
-    getContractsByServiceQuery
+    getContractsByServiceQuery,
+    getContractNumberAndDateQuery
 };

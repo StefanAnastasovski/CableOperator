@@ -32,7 +32,7 @@ createEmployee = async (req, res) => {
     let bodyInfo = req.body;
     try {
         let neededEmployeeInfo = await neededEmployeeQueryInfo(bodyInfo);
-        await addSalaryForNewEmployeeQuery(neededEmployeeInfo)
+        await addSalaryForNewEmployeeQuery(neededEmployeeInfo);
         await createPersonalInformationQuery(neededEmployeeInfo);
         console.log("Personal Information is created!");
         await createBankAccountQuery(neededEmployeeInfo);

@@ -110,7 +110,6 @@ getAllEmployeesWorkStatusQuery = (status) => {
             if (error) {
                 reject(error);
             } else {
-                console.log(results);
                 resolve(results);
             }
         });
@@ -146,7 +145,6 @@ getAllEmployeesByTypeQuery = (type) => {
             if (error) {
                 reject(error);
             } else {
-                console.log(results);
                 resolve(results);
             }
         });
@@ -270,6 +268,22 @@ getNumberOfEmployeesQuery = () => {
     });
 };
 
+changeIsFreeQuery = (isFree, umcn) =>{
+    const query = `UPDATE employee 
+        SET is_free = ?
+        WHERE pi_umcn = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, [isFree, umcn], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+
 module.exports = {
     getEmployeeInfoQuery,
     createEmployeeQuery,
@@ -279,5 +293,6 @@ module.exports = {
     getAllEmployeesUmcnQuery,
     getNeededSalaryInfoQuery,
     getEmployeesUmcnQuery,
-    getNumberOfEmployeesQuery
+    getNumberOfEmployeesQuery,
+    changeIsFreeQuery
 };

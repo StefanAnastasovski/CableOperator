@@ -175,7 +175,7 @@ isClientExistQuery = (umcn) => {
     const query = `
         SELECT umcn
         FROM client_information as ci, personal_information as pi
-        WHERE pi.umcn = ? AND pi.umcn = ci.pi_umcn`;
+        WHERE ci.pi_umcn = ? AND ci.pi_umcn = pi.umcn `;
 
     return new Promise((resolve, reject) => {
         conn.query(query, [umcn], (error, results, fields) => {

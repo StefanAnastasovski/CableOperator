@@ -93,7 +93,7 @@ populateSchedule = (emInfo, year, month) => {
                         query = {
                             employee_umcn: item.pi_umcn,
                             work_date: date.format(day, 'YYYY-MM-DD'),
-                            day_of_week: whatDayIs(day.getDay()),
+                            day_of_week: whatDayIsIt(day.getDay()),
                             is_weekend: isWeekend,
                             shift_id: weekShift
                         };
@@ -104,7 +104,7 @@ populateSchedule = (emInfo, year, month) => {
                         query = {
                             employee_umcn: item.pi_umcn,
                             work_date: date.format(day, 'YYYY-MM-DD'),
-                            day_of_week: whatDayIs(day.getDay()),
+                            day_of_week: whatDayIsIt(day.getDay()),
                             is_weekend: isWeekend,
                             shift_id: nextWeekShift
                         };
@@ -122,7 +122,7 @@ populateSchedule = (emInfo, year, month) => {
                     query = {
                         employee_umcn: item.pi_umcn,
                         work_date: date.format(day, 'YYYY-MM-DD'),
-                        day_of_week: whatDayIs(day.getDay()),
+                        day_of_week: whatDayIsIt(day.getDay()),
                         is_weekend: isWeekend,
                         shift_id: shift.OFF
                     };

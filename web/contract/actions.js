@@ -1,46 +1,91 @@
 let querys = require('./querys');
 
-
+const randomInt = require('random-int');
 let {reviseDateAndTime, printSqlError} = require('../helper');
 let {neededQueryInfo, isAllowedToMakeAContract, createClientIfNotExist} = require('./common');
-let {getTypeOfClientQuery, isClientExistQuery} = require('../client/querys');
+let {getTypeOfClientQuery, isClientExistQuery, getClientIdQuery} = require('../client/querys');
 let {checkIsBillExistQuery,createAllBillsQuery} = require('../bill/querys');
+let {enterInfoInWarehouseQuery} = require('../warehouse/querys');
+let {createInstallationQuery} = require('../installation/querys');
+let {getAllEmployeesByTypeQuery, getEmployeeInfoQuery} = require('../employee/querys');
+
 
 createContract = async (req, res) => {
     let umcn = req.params.umcn;
     let bodyInfo = req.body;
-
     try {
-        let isClientExist = await isClientExistQuery(bodyInfo.client_id);
-        let contractInfo = neededQueryInfo(bodyInfo, umcn);
-        if (isClientExist.length) {
-            let typeOfClient = await getTypeOfClientQuery(bodyInfo.client_id);
-            let numberOfContract = await querys.getNumberOfContractForClientQuery(bodyInfo.client_id);
-            let isAllowed = isAllowedToMakeAContract(typeOfClient, numberOfContract);
-            if(isAllowed){
-                await querys.createContractQuery(contractInfo);
+        let isTO = await getEmployeeInfoQuery(umcn);
+        if(isTO.length && (isTO[0].em_type === "Technical Operator")){
+            let clientExistInfo = {client_id : bodyInfo.umcn};
+            let isClientExist = await isClientExistQuery(clientExistInfo.client_id);
+            let contractInfo = neededQueryInfo(bodyInfo, umcn);
+            if (isClientExist.length) {
+                let typeOfClient = await getTypeOfClientQuery(clientExistInfo.client_id);
+                let numberOfContract = await querys.getNumberOfContractForClientQuery(clientExistInfo.client_id);
+                let isAllowed = isAllowedToMakeAContract(typeOfClient, numberOfContract);
 
-                let billExist = await checkIsBillExistQuery(umcn, contractInfo.contract_date);
+                if(isAllowed){
+                    await querys.createContractQuery(contractInfo);
+                    //em_type = 2 -> cable operator
+                    let freeCableInstallers = await getAllEmployeesByTypeQuery(2);
+                    let randomCableInstaller = freeCableInstallers[randomInt(0,freeCableInstallers.length-1)].umcn;
+                    let contractNumberAndDate = await querys.getContractNumberAndDateQuery(bodyInfo.umcn); // last contract
+                    let warehouseInfo = {
+                        cl_contract : contractNumberAndDate.contract_number,
+                        package : bodyInfo.service,
+                        description : bodyInfo.service,
+                    };
+
+                    let installationInfo = {
+                        "contract_number": contractNumberAndDate.contract_number,
+                        "em_id" : randomCableInstaller,
+                        "cl_id" : bodyInfo.umcn,
+                        "installation_date" : contractNumberAndDate.contract_date,
+                        "wh_id" : contractNumberAndDate.contract_number
+                    };
+                    await enterInfoInWarehouseQuery(warehouseInfo);
+                    await createInstallationQuery(installationInfo);
+                    let billExist = await checkIsBillExistQuery(contractNumberAndDate.contract_number,
+                        contractInfo.contract_date,
+                        clientExistInfo.client_id);
+                    if(billExist === 0){
+                        let clientId = (await getClientIdQuery(contractInfo.cl_id))[0].client_id;
+                        let clientInfo = {'pi_umcn': clientExistInfo.client_id, 'client_id': clientId};
+                        await createAllBillsQuery(clientInfo, contractInfo, clientId);
+                        res.status(200).send("Contract successfully made!");
+                    }
+                    else{
+                        res.status(200).send('Bill is already created!');
+                    }
+
+                }
+                else{
+                    res.status(200).send("You have maximum allowed contracts!");
+                }
+            } else {
+                contractInfo.cl_id = bodyInfo.umcn;
+                await createClientIfNotExist(bodyInfo);
+                await querys.createContractQuery(contractInfo);
+                let billExist = await checkIsBillExistQuery(contractNumberAndDate.contract_number,
+                    contractInfo.contract_date,
+                    clientExistInfo.client_id);
                 if(billExist === 0){
                     let clientId = (await getClientIdQuery(contractInfo.cl_id))[0].client_id;
-                    let clientInfo = {'pi_umcn': bodyInfo.umcn, 'client_id': clientId};
+                    let clientInfo = {'pi_umcn': clientExistInfo.client_id, 'client_id': clientId};
                     await createAllBillsQuery(clientInfo, contractInfo, clientId);
                     res.status(200).send("Contract successfully made!");
                 }
                 else{
-                    res.send('Bill is already created!');
+                    res.status(200).send('Bill is already created!');
                 }
+
             }
-            else{
-                res.status(200).send("You have maximum allowed contracts!");
-            }
-        } else {
-            contractInfo.cl_id = bodyInfo.umcn;
-            await createClientIfNotExist(bodyInfo);
-            await querys.createContractQuery(contractInfo);
-            //create bills
-            res.status(200).send("Contract successfully made!");
         }
+
+        else{
+            res.status(200).send('Wrong employee id');
+        }
+
     } catch (error) {
         printSqlError(error);
         res.status(500).send(error);

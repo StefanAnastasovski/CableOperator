@@ -111,10 +111,7 @@ neededQueryInfo = (bodyInfo, employeeUmcn) => {
         "-" + (currentDate().getMonth()+1) +
         "-" + currentDate().getDate();
     let common = bodyInfo.service;
-    console.log(date);
-
     let exDate = expirationDate(date, bodyInfo.duration);
-    console.log(exDate);
     return {
         contract_date: date,
         contract_number: generateContractNumber(),
@@ -152,6 +149,7 @@ createClientIfNotExist = async (bodyInfo) => {
     await createSpecificClientQuery(neededClientInfo);
     console.log("Client is created!");
 };
+
 
 module.exports = {
     expirationDate,

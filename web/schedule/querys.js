@@ -103,6 +103,45 @@ getMonthlyScheduleQuery = (year, month, umcn) => {
     });
 };
 
+getScheduleByDayQuery = (year, month, day) => {
+    let query;
+    let info;
+
+        info = [year, month, day];
+        query = `
+            select first_name,
+                   last_name,
+                   work_date,
+                   day_of_week,
+                   is_weekend,
+                   shift,
+                   hours_of_work,
+                   start_at,
+                   end_at
+
+            FROM employee_schedule AS em,
+                 shift AS s,
+                 employee AS e,
+                 personal_information AS pi
+            WHERE  YEAR (work_date) = ?
+              AND MONTH (work_date) = ?
+              AND DAY(work_date) = ?
+              AND em.shift_id = s.id
+              AND em.employee_umcn = e.pi_umcn
+            ORDER BY work_date`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, info, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+
 
 getScheduleForSpecificEmployeeQuery = (umcn, year, month) => {
     const query = `
@@ -138,5 +177,6 @@ getScheduleForSpecificEmployeeQuery = (umcn, year, month) => {
 module.exports = {
     createMonthlyScheduleQuery,
     getMonthlyScheduleQuery,
-    getScheduleForSpecificEmployeeQuery
+    getScheduleForSpecificEmployeeQuery,
+    getScheduleByDayQuery
 };

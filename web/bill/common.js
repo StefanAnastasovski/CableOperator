@@ -1,5 +1,4 @@
 let {expirationDate, yearChange} = require('../contract/common');
-
 returnDuration = (duration) => {
 
     if (parseInt(duration) === 1 || duration === 'Weekly') {
@@ -62,7 +61,7 @@ createBillsByDuration = (duration, date, billInfo, clientUmcn, clientId) => {
     return array;
 };
 
-populateBills= async (clientUmcnAndId, billInfo, clientId) => {
+populateBills = async (clientUmcnAndId, billInfo, clientId) => {
     let date;
 
     let duration = returnDuration(billInfo.duration);

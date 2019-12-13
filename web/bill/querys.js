@@ -29,6 +29,7 @@ getAllBillsForClientQuery = (umcn) => {
         });
     });
 };
+let { yearChange} = require('../contract/common');
 
 createAllBillsQuery = async (clientInfo, billInfo, clientId) => {
     let query;
@@ -41,10 +42,38 @@ createAllBillsQuery = async (clientInfo, billInfo, clientId) => {
 
     let bills = await populateBills(clientInfo, billInfo, clientId);
     if(bills.length > 1){
+        let nextMonth = bills[0].monthly_bill;
+        let flagForFirstMonth = 0;
         bills.forEach((item) => {
-            info = [item.monthly_bill, item.service, item.payment_due,
-                item.bill_id, item.is_paid, item.price, item.cl_umcn,
-                item.contract_number];
+            if(flagForFirstMonth === 1){
+                nextMonth = nextMonth.split('-');
+                if(nextMonth[1] === '12'){
+                    nextMonth = {
+                        year : nextMonth[0],
+                        month : nextMonth[1],
+                        day : nextMonth[2]
+                    };
+                    nextMonth = yearChange(nextMonth);
+                    nextMonth = nextMonth.year + "-" +
+                        nextMonth.month + "-01";
+                    console.log(nextMonth)
+                }
+                else{
+                    nextMonth[1] =(parseInt(nextMonth[1]) + 1).toString();
+                    nextMonth = nextMonth[0] + "-" + nextMonth[1] + "-1"
+                }
+                info = [nextMonth, item.service, item.payment_due,
+                    item.bill_id, item.is_paid, item.price, item.cl_umcn,
+                    item.contract_number];
+            }
+            else{
+                info = [item.monthly_bill, item.service, item.payment_due,
+                    item.bill_id, item.is_paid, item.price, item.cl_umcn,
+                    item.contract_number];
+                flagForFirstMonth = 1;
+            }
+
+
             return new Promise((resolve, reject) => {
                 conn.query(query, info,  (error, results, fields) => {
                     if (error) {
@@ -73,7 +102,7 @@ createAllBillsQuery = async (clientInfo, billInfo, clientId) => {
 
 };
 
-checkIsBillExistQuery = (umcn, billInfo) =>{
+checkIsBillExistQuery = (umcn, billInfo, contractNumber) =>{
         let date = billInfo.split('-');
         let query;
         let info;
@@ -82,8 +111,9 @@ checkIsBillExistQuery = (umcn, billInfo) =>{
             WHERE cl_umcn = ?
                 AND YEAR(monthly_bill) = ?
                 AND MONTH(monthly_bill) = ?
+                AND contract_number = ?
     `;
-        info = [umcn, date[0], date[1]];
+        info = [umcn, date[0], date[1], contractNumber];
             return new Promise((resolve, reject) => {
                 conn.query(query, info,  (error, results, fields) => {
                     if (error) {

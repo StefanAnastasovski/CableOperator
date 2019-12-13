@@ -24,7 +24,7 @@ createMonthlySchedule = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).send("error");
+        res.status(500).send("error: " + error);
     }
 
 };
@@ -51,9 +51,18 @@ createScheduleForSpecificMonth = async (req, res) => {
 };
 
 getMonthlySchedule = async (req, res) => {
-
     try {
-        if(req.params.month && req.params.year && req.params.umcn){
+    if (req.params.month && req.params.year && req.params.day) {
+            let month = req.params.month;
+            let year = req.params.year;
+            let day = req.params.day;
+
+            let schedule = await querys.getScheduleByDayQuery(year, month,day);
+            reviseDateAndTime(schedule);
+
+            res.status(200).send(schedule);
+        }
+        else if(req.params.month && req.params.year && req.params.umcn){
             let month = req.params.month;
             let year = req.params.year;
             let umcn = req.params.umcn;
