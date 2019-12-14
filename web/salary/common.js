@@ -53,6 +53,7 @@ checkIfCompanyBalanceIsEnough = (companyBalance, neededBalance) =>{
 };
 
 reviseDateFromBody = (date) =>{
+    console.log(date);
     date = date.split("-");
     return {
         year: date[0],

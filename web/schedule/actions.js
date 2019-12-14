@@ -15,7 +15,6 @@ createMonthlySchedule = async (req, res) => {
         //check if schedule already created
         let isCreatedSchedule = await querys.getMonthlyScheduleQuery(year, nextMonth);
         if (isCreatedSchedule.length !== 0) {
-            console.log('Is already created');
             res.status(200).send("Next Month's Schedule is already created!");
         } else {
             let employeesInfo = await getAllEmployeesUmcnQuery();
@@ -59,7 +58,6 @@ getMonthlySchedule = async (req, res) => {
 
             let schedule = await querys.getScheduleByDayQuery(year, month,day);
             reviseDateAndTime(schedule);
-
             res.status(200).send(schedule);
         }
         else if(req.params.month && req.params.year && req.params.umcn){

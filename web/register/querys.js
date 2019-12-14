@@ -37,7 +37,7 @@ createRegisterQuery = (regInfo) => {
     });
 };
 
-CheckRegisterIsBusyQuery = (terminal, isBusy) => {
+checkRegisterIsBusyQuery = (terminal, isBusy) => {
     if (terminal) {
         const query = `SELECT terminal, workday, is_busy, balance
                        FROM cash_register
@@ -130,11 +130,89 @@ registerChangeQuery = (changeBody, terminal, date) => {
     });
 };
 
+getRegisterIdQuery = (date, terminal) => {
+    const query = `SELECT *
+                   FROM cash_register
+                   WHERE  terminal = ? AND YEAR(workday) = ?
+                     AND MONTH(workday) = ?
+                     AND DAY(workday) = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, [terminal, date.year, date.month, date.day], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getAllFreeTerminalQuery = (date) => {
+    const query = `SELECT * 
+    FROM cash_register
+    WHERE is_busy = ? 
+      AND YEAR(workday) = ? 
+      AND MONTH(workday) = ?
+      AND DAY(workday) = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, [0, date.year, date.month, date.day], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+changeTerminalBalancelQuery = (terminal, addBalance, date) => {
+    const query = `UPDATE cash_register 
+    SET balance = balance + ?
+    WHERE terminal = ?
+      AND YEAR(workday) = ?
+      AND MONTH(workday) = ?
+      AND DAY(workday) = ?`;
+    let info = [parseInt(addBalance), terminal, date.year, date.month, date.day];
+    return new Promise((resolve, reject) => {
+        conn.query(query, info, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+getRegisterBalanceFromAllTerminalQuery = (date) => {
+    const query = `SELECT terminal, balance, is_busy
+                   FROM cash_register
+                   WHERE YEAR(workday) = ?
+                   AND MONTH(workday) = ?
+                   AND DAY(workday) = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, [date.year, date.month, date.day], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                results = results.reduce((acc, currItem) =>{
+                    return acc + parseInt(currItem.balance);
+                }, 0);
+                resolve(results);
+            }
+        });
+    });
+};
+
 module.exports = {
     getRegisterInfoQuery,
-    CheckRegisterIsBusyQuery,
+    checkRegisterIsBusyQuery,
     getRegisterBalanceCurrentDayQuery,
     getRegisterBalanceSpecificMonthQuery,
     registerChangeQuery,
-    createRegisterQuery
+    createRegisterQuery,
+    getRegisterIdQuery,
+    getAllFreeTerminalQuery,
+    changeTerminalBalancelQuery,
+    getRegisterBalanceFromAllTerminalQuery
 };

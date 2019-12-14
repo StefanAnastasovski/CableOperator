@@ -24,7 +24,7 @@ getAllInstallationsByDateQuery = (date) =>{
     let info;
     if(date.day){
 
-        query = `SELECT * 
+        query = `SELECT installation_date, contract_number, is_finished, em_id, cl_id, wh_id
         FROM installation
         WHERE YEAR(installation_date) = ?
         AND MONTH(installation_date) = ?
@@ -32,7 +32,7 @@ getAllInstallationsByDateQuery = (date) =>{
         info = [date.year, date.month, date.day];
     }
     else{
-        query = `SELECT * 
+        query = `SELECT installation_date, contract_number, is_finished, em_id, cl_id, wh_id
         FROM installation
         WHERE YEAR(installation_date) = ?
         AND MONTH(installation_date) = ?`;
@@ -55,7 +55,6 @@ changeIsFinishedQuery = (isFinished, contract, date) => {
     let info;
 
     if(date){
-        console.log(date)
         query = `UPDATE installation 
         SET is_finished = ?, installation_date = ?
         WHERE contract_number = ?`;

@@ -10,20 +10,15 @@ const app = express();
 
 // app body
 app.use(middleware.logger);
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
+app.use(middleware.emptyBody);
 
 app.use('/', appRouter);
 
-// app.use('/register/:id', middleware.emptyBody);
 
 app.use(middleware.wrongRoute);
-// app.use(middleware.emptyBody);
-
-
 app.use(middleware.errorHandler);
 
 

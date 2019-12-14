@@ -5,10 +5,10 @@ let routes = express.Router();
 
 routes.get('/clients', actions.getAllClientsInfo);
 routes.get('/client/:umcn', actions.getSpecificClientInfo);
-routes.get('/clientInfo', actions.getClientTableInfo);
-routes.get('/clientsStatus/:status', actions.getClientsStatus);
+routes.get('/client/info', actions.getClientTableInfo);
+routes.get('/clients/status/:status', actions.getClientsStatus);
 routes.post('/client', actions.createClient);
-routes.patch('/clientStatus/:umcn', actions.changeClient);
-// routes.delete('/client', actions.deleteClient);
+routes.patch('/client/status/:umcn', actions.changeClient);
+// routes.delete('/client/:umcn', actions.deleteClient);
 
 module.exports = routes;

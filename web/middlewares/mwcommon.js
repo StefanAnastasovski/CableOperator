@@ -4,7 +4,7 @@ logger = (req, res, next) => {
     next();
 };
 
-emptyBody = (errBody, req, res, next) => {
+emptyBody = (req, res, next) => {
     let method = req.method;
     let keys = Object.keys(req.body);
     let values = Object.values(req.body);
@@ -13,8 +13,9 @@ emptyBody = (errBody, req, res, next) => {
             var error = new Error("Empty Body!");
             error.status = 400;
             error.method = method;
-            next(error);
+            console.log(`Logged ${method} with empty body!`);
         }
+            next();
 };
 
 wrongRoute = (req, res, next) => {

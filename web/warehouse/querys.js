@@ -2,7 +2,7 @@ let conn = require('../database');
 
 getWarehouseInfoQuery = () => {
     const query = `
-        SELECT *
+        SELECT cl_contract, package, description
         FROM warehouse`;
 
     return new Promise((resolve, reject) => {
@@ -34,6 +34,7 @@ enterInfoInWarehouseQuery = (bodyInfo) => {
         });
     });
 };
+
 module.exports = {
     getWarehouseInfoQuery,
     enterInfoInWarehouseQuery

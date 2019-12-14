@@ -29,7 +29,7 @@ getSpecificClientInfo = async (req, res) => {
 
 getClientTableInfo = async (req, res) => {
     try {
-        const client = await querys.getClientTableInfoQuery();
+        let client = await querys.getClientTableInfoQuery();
         console.log(client);
         res.status(200).send(client);
     } catch (error) {
@@ -71,18 +71,29 @@ changeClient = async (req, res) => {
 
     try {
         await querys.changeClientQuery(bodyInfo, umcn);
-        res.status(200).send("Update completed successfully!");
+        res.status(200).send("Update successfully completed !");
     } catch (error) {
         printSqlError(error);
         res.status(500).send(error);
     }
 };
 
+deleteClient = async (req, res) =>{
+    let umcn = req.params.umcn;
+    try {
+        await querys.deleteClientByIdQuery(umcn);
+        res.status(200).send("Delete successfully completed!");
+    } catch (error) {
+        printSqlError(error);
+        res.status(500).send(error);
+    }
+}
 module.exports = {
     getAllClientsInfo,
     getSpecificClientInfo,
     getClientTableInfo,
     createClient,
     getClientsStatus,
-    changeClient
+    changeClient,
+    deleteClient
 };

@@ -123,7 +123,7 @@ neededQueryInfo = (bodyInfo, employeeUmcn) => {
         service: common,
         description_service: common,
         em_id: employeeUmcn,
-        cl_id: bodyInfo.client_id
+        cl_id: bodyInfo.umcn
     };
 };
 isAllowedToMakeAContract = (typeOfClient, numberOfContract) =>{

@@ -178,10 +178,30 @@ getBillForSpecificClientQuery = (umcn, date) => {
 
 };
 
+getBillByBillIdQuery = (billId) => {
+    let query;
+    query = `
+        SELECT monthly_bill, contract_number, service, payment_due, bill_id, is_paid, price, cl_umcn
+        FROM bill as b
+        WHERE bill_id = ?`;
+
+    return new Promise((resolve, reject) => {
+        conn.query(query, [billId], (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+
+};
+
 module.exports = {
     getAllBillsForClientQuery,
     createAllBillsQuery,
     changeIsPaidBillQuery,
     getBillForSpecificClientQuery,
-    checkIsBillExistQuery
+    checkIsBillExistQuery,
+    getBillByBillIdQuery
 };

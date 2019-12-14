@@ -60,6 +60,7 @@ getAllEmployeesWorkStatus = async (req, res) => {
 
 getAllEmployeesByType = async (req, res) => {
     let type = req.params.type;
+    console.log(type)
     try {
         const employee = await querys.getAllEmployeesByTypeQuery(type);
         reviseDateAndTime(employee);

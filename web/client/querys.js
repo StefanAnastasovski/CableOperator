@@ -203,6 +203,21 @@ getClientIdQuery = (umcn) => {
     });
 };
 
+deleteClientByIdQuery = (umcn) => {
+    const query = `DELETE FROM client_information
+                   WHERE pi_umcn = ?`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, umcn, (error, results, fields) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+
 module.exports = {
     getClientInfoQuery,
     getClientTableInfoQuery,
@@ -212,5 +227,6 @@ module.exports = {
     getAllClientsUmcnAndIdQuery,
     getTypeOfClientQuery,
     isClientExistQuery,
-    getClientIdQuery
+    getClientIdQuery,
+    deleteClientByIdQuery
 };

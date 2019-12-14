@@ -35,6 +35,10 @@ reviseDateAndTime = (data) => {
         if(item.installation_date){
             item.installation_date =  date.format(item.installation_date, 'YYYY-MM-DD') ;
         }
+        if(item.date_of_pay && item.date_of_bill){
+            item.date_of_pay =  date.format(item.date_of_pay, 'YYYY-MM-DD') ;
+            item.date_of_bill = date.format(item.date_of_bill, 'YYYY-MM-DD') ;
+        }
     });
 };
 

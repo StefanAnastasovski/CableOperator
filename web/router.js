@@ -10,6 +10,7 @@ const salaryRouter = require('./salary/routes');
 const warehouseRouter = require('./warehouse/routes');
 const contractRouter = require('./contract/routes');
 const installationRouter = require('./installation/routes');
+const paymentRouter = require('./payment/routes');
 
 const appRouter = express.Router();
 
@@ -25,5 +26,6 @@ appRouter.use(salaryRouter);
 appRouter.use(warehouseRouter);
 appRouter.use(contractRouter);
 appRouter.use(installationRouter);
+appRouter.use(paymentRouter);
 
 module.exports = appRouter;

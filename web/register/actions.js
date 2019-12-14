@@ -2,13 +2,24 @@ let querys = require('./querys');
 
 let {currentDate, createRegister} = require('./common');
 let {reviseDateAndTime} = require('../helper');
+let {changeBankAccountQuery, getBankAccountQuery} = require('../bank_account/querys');
+let {getRegisterBalanceFromAllTerminalQuery} = require('../register/querys');
 
 getRegisterInfo = async (req, res) => {
     try {
-        await createRegister();
         const register = await querys.getRegisterInfoQuery();
         reviseDateAndTime(register);
         res.status(200).send(register);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+
+};
+
+createRegisterForToday = async (req, res) => {
+    try {
+        await createRegister();
+        res.status(200).send('Register is created!');
     } catch (error) {
         res.status(500).send(error);
     }
@@ -32,7 +43,7 @@ getRegisterInfoSpecificTerminal = async (req, res) => {
 
 };
 
-CheckRegisterIsBusy = async (req, res) => {
+checkRegisterIsBusy = async (req, res) => {
     let isBusy = req.params.isBusy;
     let terminal = req.params.terminal;
 
@@ -40,7 +51,7 @@ CheckRegisterIsBusy = async (req, res) => {
         if (!(isBusy === '0' || isBusy === '1')) {
             res.status(400).send("Try again! Invalid Parametar. ");
         } else {
-            const register = await querys.CheckRegisterIsBusyQuery(terminal, isBusy);
+            const register = await querys.checkRegisterIsBusyQuery(terminal, isBusy);
             reviseDateAndTime(register);
             res.status(200).send(register);
         }
@@ -105,11 +116,40 @@ registerChange = async (req, res) => {
 
 };
 
+enterBalanceInBankAccount = async (req, res) => {
+    let bodyInfo = req.body;
+    try {
+        let bankAccount = await getBankAccountQuery(process.env.ACCOUNTID);
+        if (bankAccount === 0) {
+            res.status(400).send("Non-exist Bank Account!");
+        } else if (bodyInfo.op === '+') {
+            let date = currentDate();
+            let dateForQuery = date.split('-');
+            dateForQuery = {
+                    year : dateForQuery[0],
+                    month : dateForQuery[1],
+                    day : dateForQuery[2]
+            };
+            let registerBalance = await getRegisterBalanceFromAllTerminalQuery(dateForQuery);
+            let neededBAQueryInfo = {balance : registerBalance};
+            console.log(neededBAQueryInfo)
+            await changeBankAccountQuery(neededBAQueryInfo, new Date, process.env.ACCOUNTID, bodyInfo.op);
+        }
+        res.status(200).send("Update completed successfully!");
+    } catch (error) {
+        res.status(500).send(error);
+    }
+
+};
+
+
 module.exports = {
     getRegisterInfo,
     getRegisterInfoSpecificTerminal,
-    CheckRegisterIsBusy,
+    checkRegisterIsBusy,
     getRegisterBalanceCurrentDay,
     getRegisterBalanceSpecificMonth,
-    registerChange
+    registerChange,
+    createRegisterForToday,
+    enterBalanceInBankAccount
 };
